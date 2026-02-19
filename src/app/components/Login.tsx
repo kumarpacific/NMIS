@@ -124,7 +124,7 @@ export function Login() {
                         <Input
                           id="pfid"
                           type="text"
-                          placeholder="e.g., PF001, ADMIN001"
+                          placeholder="e.g., 10#####, 70#####"
                           value={pfId}
                           onChange={(e) => setPfId(e.target.value.toUpperCase())}
                           className="pl-10"
@@ -188,8 +188,8 @@ export function Login() {
                                 <p className="text-xs text-gray-500">{user.email}</p>
                               </div>
                               <div className={`px-2 py-1 rounded text-xs font-medium capitalize ${user.role === "admin" ? "bg-red-100 text-red-700" :
-                                  user.role === "maintainer" ? "bg-yellow-100 text-yellow-700" :
-                                    "bg-blue-100 text-blue-700"
+                                user.role === "maintainer" ? "bg-yellow-100 text-yellow-700" :
+                                  "bg-blue-100 text-blue-700"
                                 }`}>
                                 {user.role}
                               </div>
