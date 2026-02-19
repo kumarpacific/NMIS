@@ -71,8 +71,8 @@ export function Login() {
           <CardHeader>
             <CardTitle>Welcome Back</CardTitle>
             <CardDescription>
-              {currentUser 
-                ? `Logged in as ${currentUser.name} (${currentUser.role}). Switch user or switch back to Admin.` 
+              {currentUser
+                ? `Logged in as ${currentUser.name} (${currentUser.role}). Switch user or switch back to Admin.`
                 : "Select a user and enter password to continue"}
             </CardDescription>
           </CardHeader>
@@ -82,7 +82,7 @@ export function Login() {
               <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
                 <p className="text-sm font-medium text-amber-900 mb-3">Admin Mode: Switch Role</p>
                 <div className="space-y-2">
-                  <Button 
+                  <Button
                     onClick={() => navigate("/dashboard")}
                     variant="outline"
                     className="w-full justify-start text-amber-700 border-amber-200 hover:bg-amber-100"
@@ -90,7 +90,7 @@ export function Login() {
                     <LogIn className="w-4 h-4 mr-2" />
                     Continue as Admin
                   </Button>
-                  <Button 
+                  <Button
                     onClick={() => {
                       const userAccount = allUsers.find(u => u.role === "user");
                       if (userAccount) handleAdminImpersonate(userAccount.email, "user");
@@ -101,7 +101,7 @@ export function Login() {
                     <LogIn className="w-4 h-4 mr-2" />
                     View as User
                   </Button>
-                  <Button 
+                  <Button
                     onClick={() => {
                       const maintainerAccount = allUsers.find(u => u.role === "maintainer");
                       if (maintainerAccount) handleAdminImpersonate(maintainerAccount.email, "maintainer");
@@ -112,7 +112,7 @@ export function Login() {
                     <LogIn className="w-4 h-4 mr-2" />
                     View as Maintainer
                   </Button>
-                  <Button 
+                  <Button
                     onClick={() => {
                       localStorage.removeItem("authUser");
                       localStorage.removeItem("isAuthenticated");
@@ -144,11 +144,10 @@ export function Login() {
                           <p className="font-medium text-gray-900">{user.name}</p>
                           <p className="text-sm text-gray-600">{user.email}</p>
                         </div>
-                        <div className={`px-2 py-1 rounded text-xs font-medium capitalize ${
-                          user.role === "admin" ? "bg-red-100 text-red-700" :
-                          user.role === "maintainer" ? "bg-yellow-100 text-yellow-700" :
-                          "bg-blue-100 text-blue-700"
-                        }`}>
+                        <div className={`px-2 py-1 rounded text-xs font-medium capitalize ${user.role === "admin" ? "bg-red-100 text-red-700" :
+                            user.role === "maintainer" ? "bg-yellow-100 text-yellow-700" :
+                              "bg-blue-100 text-blue-700"
+                          }`}>
                           {user.role}
                         </div>
                       </div>
@@ -156,7 +155,7 @@ export function Login() {
                   ))}
                 </div>
                 {currentUser && (
-                  <Button 
+                  <Button
                     onClick={() => {
                       localStorage.removeItem("authUser");
                       localStorage.removeItem("isAuthenticated");
@@ -176,7 +175,7 @@ export function Login() {
                   <p className="text-sm text-gray-600">Selected User:</p>
                   <p className="font-medium text-gray-900">{allUsers.find(u => u.email === selectedEmail)?.name}</p>
                   <p className="text-xs text-gray-500">{selectedEmail}</p>
-                  <Button 
+                  <Button
                     type="button"
                     variant="ghost"
                     size="sm"
