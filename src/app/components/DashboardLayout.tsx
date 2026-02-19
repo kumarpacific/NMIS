@@ -1,37 +1,42 @@
 import { useState } from "react";
 import { Outlet, useNavigate, useLocation, Link } from "react-router-dom";
-import { 
-  LayoutDashboard, 
-  FileText, 
-  Settings, 
-  LogOut, 
-  Menu, 
-  X, 
+import {
+  LayoutDashboard,
+  FileText,
+  Settings,
+  LogOut,
+  Menu,
+  X,
   Landmark,
   ChevronRight,
-  User
+  User,
+  Users
 } from "lucide-react";
 import { Button } from "@/app/components/ui/button";
+import { useAuth } from "../../lib/authContext";
 
 interface NavItem {
   name: string;
   path: string;
   icon: React.ReactNode;
+  adminOnly?: boolean;
 }
 
 const navItems: NavItem[] = [
   { name: "Dashboard", path: "/dashboard", icon: <LayoutDashboard className="w-5 h-5" /> },
   { name: "ATM Logs", path: "/dashboard/logs", icon: <FileText className="w-5 h-5" /> },
   { name: "Settings", path: "/dashboard/settings", icon: <Settings className="w-5 h-5" /> },
+  { name: "Users", path: "/dashboard/users", icon: <Users className="w-5 h-5" />, adminOnly: true },
 ];
 
 export function DashboardLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, logout } = useAuth();
 
   const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated");
+    logout();
     navigate("/");
   };
 
@@ -65,7 +70,7 @@ export function DashboardLayout() {
                 <Landmark className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h2 className="font-bold text-gray-900">ATM Analytics</h2>
+                <h2 className="font-bold text-gray-900">ATM Connect</h2>
                 <p className="text-xs text-gray-500">Admin Panel</p>
               </div>
             </div>
@@ -79,28 +84,29 @@ export function DashboardLayout() {
 
           {/* Navigation */}
           <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-            {navItems.map((item) => {
-              const active = isActive(item.path);
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={() => setIsSidebarOpen(false)}
-                  className={`
+            {navItems
+              .filter(item => !item.adminOnly || user?.role === "admin")
+              .map((item) => {
+                const active = isActive(item.path);
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setIsSidebarOpen(false)}
+                    className={`
                     flex items-center gap-3 px-4 py-3 rounded-lg transition-colors
-                    ${
-                      active
+                    ${active
                         ? "bg-blue-50 text-blue-700"
                         : "text-gray-700 hover:bg-gray-100"
-                    }
+                      }
                   `}
-                >
-                  {item.icon}
-                  <span className="font-medium">{item.name}</span>
-                  {active && <ChevronRight className="w-4 h-4 ml-auto" />}
-                </Link>
-              );
-            })}
+                  >
+                    {item.icon}
+                    <span className="font-medium">{item.name}</span>
+                    {active && <ChevronRight className="w-4 h-4 ml-auto" />}
+                  </Link>
+                );
+              })}
           </nav>
 
           {/* User Profile & Logout */}
@@ -110,8 +116,8 @@ export function DashboardLayout() {
                 <User className="w-4 h-4 text-white" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">Admin User</p>
-                <p className="text-xs text-gray-500 truncate">admin@example.com</p>
+                <p className="text-sm font-medium text-gray-900 truncate">{user?.name || "User"}</p>
+                <p className="text-xs text-gray-500 truncate capitalize">{user?.role || "user"}</p>
               </div>
             </div>
             <Button
@@ -137,11 +143,12 @@ export function DashboardLayout() {
             >
               <Menu className="w-6 h-6" />
             </button>
-            
+
             <div className="flex items-center gap-4 ml-auto">
               <div className="hidden sm:block text-right">
                 <p className="text-sm text-gray-600">Welcome back,</p>
-                <p className="font-medium text-gray-900">Admin User</p>
+                <p className="font-medium text-gray-900">{user?.name || "User"}</p>
+                <p className="text-xs text-gray-500 capitalize">{user?.role || "user"}</p>
               </div>
             </div>
           </div>
