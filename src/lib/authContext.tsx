@@ -4,6 +4,7 @@ export type UserRole = "admin" | "maintainer" | "user";
 
 export interface User {
     id: string;
+    pfId: string; // PF ID / Username
     email: string;
     name: string;
     role: UserRole;
@@ -16,6 +17,7 @@ export interface StoredUser extends User {
 // Hardcoded admin credential
 const ADMIN_USER = {
     id: "admin-001",
+    pfId: "ADMIN001",
     email: "admin@admin.com",
     password: "admin@12345",
     name: "Admin",
@@ -26,6 +28,7 @@ const ADMIN_USER = {
 const DEFAULT_TEMPLATE_USERS: StoredUser[] = [
     {
         id: "user-001",
+        pfId: "PF001",
         email: "user1@example.com",
         password: "defpass",
         name: "User One",
@@ -33,6 +36,7 @@ const DEFAULT_TEMPLATE_USERS: StoredUser[] = [
     },
     {
         id: "user-002",
+        pfId: "PF002",
         email: "user2@example.com",
         password: "defpass",
         name: "User Two",
@@ -40,6 +44,7 @@ const DEFAULT_TEMPLATE_USERS: StoredUser[] = [
     },
     {
         id: "maintainer-001",
+        pfId: "PF003",
         email: "maintainer@example.com",
         password: "defpass",
         name: "Maintainer",
@@ -60,6 +65,7 @@ interface AuthContextType {
     user: User | null;
     isAuthenticated: boolean;
     login: (email: string, password: string) => { success: boolean; message?: string };
+    loginWithPfId: (pfId: string, password: string) => { success: boolean; message?: string };
     logout: () => void;
     getAllUsers: () => StoredUser[];
     updateUser: (userId: string, updates: Partial<StoredUser>) => void;
@@ -95,6 +101,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
             if (!foundUser) {
                 return { success: false, message: "Invalid email or password" };
+            }
+
+            const { password: _, ...userWithoutPassword } = foundUser;
+            setUser(userWithoutPassword);
+            localStorage.setItem("authUser", JSON.stringify(userWithoutPassword));
+            localStorage.setItem("isAuthenticated", "true");
+            return { success: true };
+        } catch (e) {
+            return { success: false, message: "Login failed" };
+        }
+    };
+
+    const loginWithPfId = (pfId: string, password: string): { success: boolean; message?: string } => {
+        try {
+            const allUsersStr = localStorage.getItem("allUsers");
+            const allUsers: StoredUser[] = allUsersStr ? JSON.parse(allUsersStr) : [ADMIN_USER, ...DEFAULT_TEMPLATE_USERS];
+
+            const foundUser = allUsers.find((u) => u.pfId === pfId && u.password === password);
+
+            if (!foundUser) {
+                return { success: false, message: "Invalid PF ID or password" };
             }
 
             const { password: _, ...userWithoutPassword } = foundUser;
@@ -179,6 +206,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 user,
                 isAuthenticated: !!user,
                 login,
+                loginWithPfId,
                 logout,
                 getAllUsers,
                 updateUser,
