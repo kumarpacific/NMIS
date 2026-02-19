@@ -118,7 +118,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const allUsersStr = localStorage.getItem("allUsers");
             const allUsers: StoredUser[] = allUsersStr ? JSON.parse(allUsersStr) : [ADMIN_USER, ...DEFAULT_TEMPLATE_USERS];
 
-            const foundUser = allUsers.find((u) => u.pfId === pfId && u.password === password);
+            const foundUser = allUsers.find((u) => u.pfId.toUpperCase() === pfId.toUpperCase() && u.password === password);
 
             if (!foundUser) {
                 return { success: false, message: "Invalid PF ID or password" };
