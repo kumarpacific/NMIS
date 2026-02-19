@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Login } from "@/app/components/Login";
 import { DashboardLayout } from "@/app/components/DashboardLayout";
 import { DashboardHome } from "@/app/components/DashboardHome";
@@ -8,7 +8,7 @@ import { ProtectedRoute } from "@/app/components/ProtectedRoute";
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         {/* Login Route */}
         <Route path="/" element={<Login />} />
@@ -30,6 +30,6 @@ export default function App() {
         {/* Catch all - redirect to login */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
